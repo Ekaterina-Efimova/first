@@ -1,9 +1,11 @@
 package com.example.first
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.first.ui.AppDetailScreen
 import com.example.first.ui.AppsScreen
 import com.example.first.ui.IntentsScreen
 
@@ -51,11 +54,24 @@ fun AppNavigation() {
                 onAppsClick = { navController.navigate("apps") }
             )
         }
+
         composable("intents") {
             IntentsScreen()
         }
+
         composable("apps") {
-            AppsScreen()
+            AppsScreen(
+                onAppClick = { appName ->
+                    val encodedName = Uri.encode(appName)
+                    navController.navigate("app_detail/$encodedName")
+                }
+            )
+        }
+
+        composable("app_detail/{appName}") { backStackEntry ->
+            val encodedName = backStackEntry.arguments?.getString("appName") ?: ""
+            val appName = Uri.decode(encodedName)
+            AppDetailScreen(appName = appName, navController = navController)
         }
     }
 }
@@ -68,13 +84,14 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Button(onClick = onIntentsClick) {
             Text("ДЗ 2: Интенты")
         }
         Button(onClick = onAppsClick) {
-            Text("ДЗ 3: Список приложений")
+            Text("ДЗ 3 и 4: Приложения и Витрина")
         }
     }
 }

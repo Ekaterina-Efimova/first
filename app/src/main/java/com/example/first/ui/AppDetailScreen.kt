@@ -19,9 +19,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.first.ui.model.AppDetails
-import com.example.first.ui.model.Category
 import kotlin.math.roundToInt
+
+import com.example.first.domain.model.AppDetails
+import com.example.first.domain.model.Category
+import com.example.first.domain.model.SimilarApp
+
 
 @Composable
 fun AppDetailScreen(appName: String, navController: NavController) {

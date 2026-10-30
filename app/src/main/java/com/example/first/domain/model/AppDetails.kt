@@ -1,11 +1,4 @@
-package com.example.first.ui.model
-
-
-data class SimilarApp(
-    val name: String,
-    val iconRes: Int,
-    val description: String
-)
+package com.example.first.domain.model
 
 enum class Category {
     APP, GAME

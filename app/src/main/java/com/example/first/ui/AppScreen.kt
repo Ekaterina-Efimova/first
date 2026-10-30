@@ -12,37 +12,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.first.R
+
+import com.example.first.domain.model.App
 import com.example.first.ui.components.AppBar
 import com.example.first.ui.components.AppCard
-import com.example.first.ui.model.AppItem
-import com.example.first.ui.model.SimilarApp
 
-// Витрину пока оставим хардкоженной
+
 private val showcaseApps = listOf(
-    SimilarApp("App 1", R.drawable.ic_launcher_foreground, "Описание 1"),
-    SimilarApp("App 2", R.drawable.ic_launcher_foreground, "Описание 2"),
-    SimilarApp("App 3", R.drawable.ic_launcher_foreground, "Описание 3"),
-    SimilarApp("App 4", R.drawable.ic_launcher_foreground, "Описание 4"),
-    SimilarApp("App 5", R.drawable.ic_launcher_foreground, "Описание 5"),
-    SimilarApp("App 6", R.drawable.ic_launcher_foreground, "Описание 6"),
-    SimilarApp("App 7", R.drawable.ic_launcher_foreground, "Описание 7"),
-    SimilarApp("App 8", R.drawable.ic_launcher_foreground, "Описание 8"),
-    SimilarApp("App 9", R.drawable.ic_launcher_foreground, "Описание 9")
+    App("App 1", "Описание 1", "Категория", "ic_launcher_foreground"),
+    App("App 2", "Описание 2", "Категория", "ic_launcher_foreground"),
+    App("App 3", "Описание 3", "Категория", "ic_launcher_foreground"),
+    App("App 4", "Описание 4", "Категория", "ic_launcher_foreground"),
+    App("App 5", "Описание 5", "Категория", "ic_launcher_foreground"),
+    App("App 6", "Описание 6", "Категория", "ic_launcher_foreground"),
+    App("App 7", "Описание 7", "Категория", "ic_launcher_foreground"),
+    App("App 8", "Описание 8", "Категория", "ic_launcher_foreground"),
+    App("App 9", "Описание 9", "Категория", "ic_launcher_foreground")
 )
 
 @Composable
 fun AppsScreen(
     onAppClick: (String) -> Unit,
-    viewModel: AppsViewModel = viewModel() // Внедряем ViewModel
+    viewModel: AppsViewModel = viewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Следим за сообщением из ViewModel и показываем Snackbar
     LaunchedEffect(viewModel.snackbarMessage) {
         viewModel.snackbarMessage?.let { message ->
             snackbarHostState.showSnackbar(message)
-            viewModel.onSnackbarShown() // Сообщаем ViewModel, что показали
+            viewModel.onSnackbarShown()
         }
     }
 
@@ -55,12 +53,12 @@ fun AppsScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Основной список из ViewModel
-            items(viewModel.sampleApps) { app ->
+            // Используем viewModel.apps вместо старого sampleApps
+            items(viewModel.apps) { app ->
                 AppCard(
                     app = app,
                     onClick = { onAppClick(app.name) },
-                    onLogoClick = { viewModel.onLogoClicked(app.name) } // Клик по логотипу
+                    onLogoClick = { viewModel.onLogoClicked(app.name) }
                 )
             }
 
@@ -93,7 +91,7 @@ fun ShowcaseSection(onAppClick: (String) -> Unit, onLogoClick: (String) -> Unit)
             ) {
                 pageApps.forEach { app ->
                     AppCard(
-                        app = AppItem(app.iconRes, app.name, app.description, "Категория"),
+                        app = app,
                         onClick = { onAppClick(app.name) },
                         onLogoClick = { onLogoClick(app.name) }
                     )

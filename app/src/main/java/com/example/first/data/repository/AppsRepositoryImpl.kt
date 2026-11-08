@@ -4,8 +4,9 @@ import com.example.first.data.dto.AppDto
 import com.example.first.data.mapper.toDomain
 import com.example.first.domain.model.App
 import com.example.first.domain.repository.AppsRepository
+import javax.inject.Inject // <-- Добавить импорт
 
-class AppsRepositoryImpl : AppsRepository {
+class AppsRepositoryImpl @Inject constructor() : AppsRepository {
 
     private val hardcodedApps = listOf(
         AppDto("VK", "Социальная сеть", "Социальные", "ic_launcher_foreground"),

@@ -62,6 +62,10 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    // Hilt для ViewModel в Compose (если нужно)
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp.logging)
+    implementation(libs.gson)
 }

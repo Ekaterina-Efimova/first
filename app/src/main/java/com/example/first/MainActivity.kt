@@ -19,10 +19,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 import com.example.first.ui.AppDetailScreen
 import com.example.first.ui.AppsScreen
 import com.example.first.ui.IntentsScreen
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     companion object {

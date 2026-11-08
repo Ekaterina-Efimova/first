@@ -9,14 +9,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.first.domain.model.App
 import com.example.first.ui.components.AppBar
 import com.example.first.ui.components.AppCard
-
 
 private val showcaseApps = listOf(
     App("App 1", "Описание 1", "Категория", "ic_launcher_foreground"),
@@ -33,7 +32,7 @@ private val showcaseApps = listOf(
 @Composable
 fun AppsScreen(
     onAppClick: (String) -> Unit,
-    viewModel: AppsViewModel = viewModel()
+    viewModel: AppsViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -48,23 +47,41 @@ fun AppsScreen(
         topBar = { AppBar() },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            // Используем viewModel.apps вместо старого sampleApps
-            items(viewModel.apps) { app ->
-                AppCard(
-                    app = app,
-                    onClick = { onAppClick(app.name) },
-                    onLogoClick = { viewModel.onLogoClicked(app.name) }
-                )
-            }
-
-            // Витрина
-            item {
-                ShowcaseSection(onAppClick = onAppClick, onLogoClick = { viewModel.onLogoClicked(it) })
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            when {
+                // Состояние загрузки
+                viewModel.isLoading -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+                // Состояние ошибки
+                viewModel.error != null -> {
+                    Column(
+                        modifier = Modifier.align(Alignment.Center).padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = viewModel.error!!, color = MaterialTheme.colorScheme.error)
+                        Spacer(Modifier.height(8.dp))
+                        Button(onClick = { viewModel.loadApps() }) {
+                            Text("Повторить")
+                        }
+                    }
+                }
+                // Успешная загрузка (список)
+                else -> {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(viewModel.apps) { app ->
+                            AppCard(
+                                app = app,
+                                onClick = { onAppClick(app.name) },
+                                onLogoClick = { viewModel.onLogoClicked(app.name) }
+                            )
+                        }
+                        // Витрина
+                        item {
+                            ShowcaseSection(onAppClick = onAppClick, onLogoClick = { viewModel.onLogoClicked(it) })
+                        }
+                    }
+                }
             }
         }
     }

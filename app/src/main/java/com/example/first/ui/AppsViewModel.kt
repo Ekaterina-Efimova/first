@@ -10,6 +10,7 @@ import com.example.first.domain.repository.AppsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.system.measureTimeMillis
 
 @HiltViewModel
 class AppsViewModel @Inject constructor(
@@ -28,6 +29,16 @@ class AppsViewModel @Inject constructor(
     var snackbarMessage by mutableStateOf<String?>(null)
         private set
 
+    // id приложения -> рейтинг
+    var ratings by mutableStateOf<Map<String, Float>>(emptyMap())
+        private set
+
+    var ratingsLoading by mutableStateOf(false)
+        private set
+
+    var lastMeasure by mutableStateOf<String?>(null)
+        private set
+
     init {
         loadApps()
     }
@@ -43,6 +54,34 @@ class AppsViewModel @Inject constructor(
             } finally {
                 isLoading = false
             }
+        }
+    }
+
+    fun loadRatingsSequentially() {
+        viewModelScope.launch {
+            ratingsLoading = true
+            val ids = apps.map { it.name } // в вашей модели id может быть отдельным полем
+            var result: Map<String, Float> = emptyMap()
+            val time = measureTimeMillis {
+                result = repository.getRatingsSequentially(ids)
+            }
+            ratings = result
+            lastMeasure = "Последовательно: ${time} ms"
+            ratingsLoading = false
+        }
+    }
+
+    fun loadRatingsInParallel() {
+        viewModelScope.launch {
+            ratingsLoading = true
+            val ids = apps.map { it.name }
+            var result: Map<String, Float> = emptyMap()
+            val time = measureTimeMillis {
+                result = repository.getRatingsInParallel(ids)
+            }
+            ratings = result
+            lastMeasure = "Параллельно: ${time} ms"
+            ratingsLoading = false
         }
     }
 
